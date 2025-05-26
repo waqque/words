@@ -8,19 +8,19 @@
 #include <fstream>
 
 
-// Предварительное объявление класса Player
+// РџСЂРµРґРІР°СЂРёС‚РµР»СЊРЅРѕРµ РѕР±СЉСЏРІР»РµРЅРёРµ РєР»Р°СЃСЃР° Player
 class Player; 
 
 class Board {
 public:
     int rows, cols;
-    // Двумерная сетка для хранения букв
+    // Р”РІСѓРјРµСЂРЅР°СЏ СЃРµС‚РєР° РґР»СЏ С…СЂР°РЅРµРЅРёСЏ Р±СѓРєРІ
     std::vector<std::vector<wchar_t>> grid;
     std::vector<std::wstring> dictionary;
-    // Множество уже использованных слов
+    // РњРЅРѕР¶РµСЃС‚РІРѕ СѓР¶Рµ РёСЃРїРѕР»СЊР·РѕРІР°РЅРЅС‹С… СЃР»РѕРІ
     std::unordered_set<std::wstring> usedWords;
     std::wstring searchText;
-    // Конструктор с параметрами
+    // РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ СЃ РїР°СЂР°РјРµС‚СЂР°РјРё
     Board(int r, int c, const std::wstring& centerWord);
 
     std::vector<std::wstring> loadDictionary(const std::string& filename);
