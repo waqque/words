@@ -108,6 +108,22 @@ void clearConsole(); // Объявление функции очистки
      * Поле заполнено или нет возможных ходов → конец игры.
 5. **Объявление победителя** (игрок с максимальным `score`) или ничья.
 
+   
+### Связи между модулями
+
+```mermaid
+graph TD
+    A[words.cpp] --> B[board.h]
+    A --> C[player.h]
+    A --> D[dfs.h]
+    A --> E[cns.h]
+    B --> C
+    F[board.cpp] --> B
+    F --> D
+    G[player.cpp] --> C
+    H[dfs.cpp] --> D
+    I[cns.cpp] --> E
+
 ### UML
 
 ---
