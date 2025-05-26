@@ -113,10 +113,10 @@ void clearConsole(); // Объявление функции очистки
 
 ---
 ![alt text](image.png)
-![М](image-2.png)
+![М](image2.png)
 
 ### Ход игры
-![alt text](image-1.png)
+![alt text](shema.png)
 ### Особенности и расширения
 
 * **Уникальность слов**: используются `usedWords` для исключения повторов.
