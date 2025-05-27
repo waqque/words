@@ -20,7 +20,7 @@
 #include "board.h"
 #include "dfs.h"
 #include "cns.h"
-
+#include "logger.h"
 using namespace std;
 
 int main() {
@@ -39,6 +39,8 @@ int main() {
         wcerr << L"Не удалось установить локаль: " << e.what() << endl;
         return 1;
     }
+    Logger gameLogger("game_log.txt");
+    gameLogger.log(L"Новая игра");
     //Ввод параметров игры
     int numPlayers, fieldSize;
     wstring centerWord;
@@ -54,12 +56,18 @@ int main() {
     wcin.ignore(10000, '\n');
     wcout << L"Стартовое слово (длина <= поле): "; getline(wcin, centerWord);
 
+
     vector<Player> players;
     for (int i = 1; i <= numPlayers; ++i) {
-        players.emplace_back(L"Игрок " + to_wstring(i));
+        wstring playerName = L"Игрок " + to_wstring(i);
+        players.emplace_back(playerName);
+        gameLogger.log(playerName + L" присоединился к игре");
     }
     //Инициализация игрового поля
     Board board(fieldSize, fieldSize, centerWord);
+    gameLogger.log(L"Создано поле размером " + to_wstring(fieldSize) + L"x" + to_wstring(fieldSize));
+    gameLogger.log(L"Центральное слово: " + centerWord);
+    gameLogger.logBoard(board.grid);
     int current = 0;
     int totalPasses = 0;
 
@@ -83,17 +91,20 @@ int main() {
         board.display();
 
         Player& pl = players[current];
+        gameLogger.log(L"Ход " + pl.name);
         wcout << pl.name << L", ваш ход (x y буква или skip): ";
         wstring line; getline(wcin, line);
         if (line == L"skip") {
             // Обработка пропуска хода
             pl.incrementPass();
             totalPasses++;
+            gameLogger.log(pl.name + L" пропускает ход. Всего пропусков: " + to_wstring(pl.passCount));
 
             // Проверка на ничью (3 пропуска подряд всеми игроками)
             if (totalPasses >= numPlayers * 3) {
                 skip = true;
                 wcout << L"Ничья по троекратным пропускам!\n";
+                gameLogger.log(L"Ничья по троекратным пропускам!");
                 break;
             }
         }
@@ -106,6 +117,9 @@ int main() {
                 // Успешный ход - сброс счетчика пропусков
                 pl.resetPass();
                 totalPasses = 0;
+                gameLogger.log(pl.name + L" поставил '" + wstring(1, c) + L"' на позицию (" + to_wstring(x) + L"," + to_wstring(y) + L")");
+                gameLogger.log(board.searchText); // Логируем найденное слово
+                gameLogger.logBoard(board.grid);  // Логируем текущее состояние поля
             }
             else {
                 // Некорректный ход - повтор ввода
@@ -116,6 +130,7 @@ int main() {
         // Проверка условий окончания игры
         if (board.isFull() || !board.hasMovesLeft()) {
             wcout << L"Игра окончена: нет возможных ходов или поле заполнено!\n";
+            gameLogger.log(L"Игра окончена!");
             break;
         }
         // Переход хода к следующему игроку
@@ -125,6 +140,7 @@ int main() {
     int best = -1;
     wstring winner;
     for (auto& p : players) {
+        gameLogger.log(p.name + L": " + to_wstring(p.score) + L" очков");
         if (p.score > best) {
             best = p.score;
             winner = p.name;
@@ -132,7 +148,10 @@ int main() {
     }
     if (skip == false) {
         wcout << L"Победитель: " << winner << L" с " << best << L" очками!\n";
+        gameLogger.log(L"Победитель: " + winner + L" с " + to_wstring(best) + L" очками!");
     }
-
+    else {
+        gameLogger.log(L"Игра завершилась вничью");
+    }
     return 0;
 }
